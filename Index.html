@@ -2,351 +2,207 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>DeepSeek Chatbot</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+  <title>DeepSeek | Auth</title>
+  <link rel="stylesheet" href="style.css" />
 
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+
+  <style>
     body {
       background: linear-gradient(145deg, #181a20, #1e222a);
       color: #eaeaea;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 24px;
-      background: rgba(35, 39, 47, 0.8);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid #2e2e2e;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-
-    .logo-title {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .logo {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: #2b2f37;
-      color: #6cc3fa;
-      display: flex;
-      align-items: center;
       justify-content: center;
-      font-size: 26px;
+      align-items: center;
     }
 
-    .app-title {
-      font-size: 1.4em;
-      color: #6cc3fa;
-      font-weight: bold;
-    }
-
-    main {
-      flex: 1;
+    .center-content {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding-top: 40px;
-      padding-bottom: 120px;
-    }
-
-    .center-box {
-      text-align: center;
-      margin-bottom: 20px;
-      padding: 0 10px;
+      background: #23272f;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
     }
 
     .center-logo {
-      width: 64px;
-      height: 64px;
-      border-radius: 16px;
+      height: 50px;
+      width: 50px;
+      border-radius: 12px;
       background: #2b2f37;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 20px;
-      font-size: 40px;
-      color: #6cc3fa;
-    }
-
-    h1 {
-      font-size: 1.8em;
-    }
-
-    .subtitle {
-      color: #aaa;
-      font-size: 1em;
-    }
-
-    #chatArea {
-      width: 100%;
-      max-width: 800px;
-      padding: 0 20px;
-      margin-top: 20px;
-      overflow-y: auto;
-      flex-grow: 1;
-    }
-
-    .message {
-      display: flex;
+      object-fit: contain;
+      box-shadow: 0 0 8px rgba(0,0,0,0.3);
       margin-bottom: 16px;
     }
 
-    .user {
-      justify-content: flex-end;
+    h1 {
+      margin-bottom: 20px;
     }
 
-    .bot {
-      justify-content: flex-start;
-    }
-
-    .bubble {
-      background: #23272f;
-      padding: 12px 16px;
-      border-radius: 14px;
-      max-width: 80%;
-      color: white;
-      white-space: pre-wrap;
-    }
-
-    .user .bubble {
-      background: #6cc3fa;
-      color: #181a20;
-      border-bottom-right-radius: 4px;
-    }
-
-    .bot .bubble {
-      border-bottom-left-radius: 4px;
-    }
-
-    .chatbar {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 90%;
-      max-width: 640px;
-      background: rgba(35, 39, 47, 0.95);
+    .auth-form {
       display: flex;
-      gap: 10px;
-      padding: 14px 20px;
-      border-radius: 20px;
-      z-index: 100;
+      flex-direction: column;
+      gap: 18px;
+      width: 320px;
     }
 
-    #user-input {
-      flex: 1;
-      padding: 12px 16px;
-      border-radius: 16px;
+    .auth-form input {
+      padding: 14px 18px;
+      border-radius: 12px;
       background: #181a20;
       border: none;
-      color: white;
+      color: #eaeaea;
       font-size: 1em;
     }
 
-    .send-btn {
+    .auth-form input:focus {
+      outline: 1px solid #6cc3fa;
+    }
+
+    .auth-btn {
       background: #6cc3fa;
-      border: none;
       color: #181a20;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      font-size: 1.2em;
-      cursor: pointer;
-    }
-
-    pre {
-      background: #111;
-      padding: 10px;
-      border-radius: 8px;
-      overflow-x: auto;
-    }
-
-    pre code {
-      color: #6cc3fa;
-    }
-
-    .copy-btn {
-      margin-top: 5px;
-      font-size: 0.9em;
-      padding: 4px 10px;
       border: none;
-      background: #444;
-      color: white;
-      border-radius: 8px;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 1.1em;
+      font-weight: 600;
       cursor: pointer;
+      transition: 0.2s ease;
     }
 
-    /* 🔽 Mobile responsiveness */
-    @media (max-width: 600px) {
-      .app-title {
-        font-size: 1.2em;
-      }
+    .auth-btn:hover {
+      background: #4ea7e0;
+    }
 
-      .chatbar {
-        padding: 12px 14px;
-        gap: 8px;
-        bottom: 12px;
-      }
+    .auth-message {
+      margin-top: 18px;
+      font-size: 1em;
+      text-align: center;
+    }
 
-      #user-input {
-        font-size: 0.95em;
-      }
+    .toggle {
+      margin-top: 24px;
+      color: #b0b0b0;
+    }
 
-      .send-btn {
-        width: 36px;
-        height: 36px;
-        font-size: 1em;
-      }
+    a {
+      color: #6cc3fa;
+      text-decoration: none;
+    }
 
-      .bubble {
-        font-size: 0.95em;
-        max-width: 90%;
-      }
+    a:hover {
+      text-decoration: underline;
+    }
 
-      header {
-        padding: 16px 16px;
-      }
-
-      .center-box h1 {
-        font-size: 1.4em;
-      }
-
-      .center-logo {
-        width: 56px;
-        height: 56px;
-        font-size: 36px;
-      }
+    .logo-icon {
+      font-size: 40px;
+      color: #6cc3fa;
+      margin-bottom: 16px;
     }
   </style>
 </head>
 <body>
-  <header>
-    <div class="logo-title">
-      <div class="logo"><span class="material-icons-outlined">search</span></div>
-      <span class="app-title">DeepSeek</span>
-    </div>
-  </header>
 
-  <main>
-    <div class="center-box">
-      <div class="center-logo">
-        <span class="material-icons-outlined">search</span>
-      </div>
-      <h1>Hi, I'm DeepSeek.</h1>
-      <p class="subtitle">How can I help you today?</p>
-    </div>
+  <div class="center-content">
+    <!-- Material Icon Logo -->
+    <span class="material-icons-outlined logo-icon">search</span>
 
-    <div id="chatArea"></div>
+    <h1 id="formTitle">Sign In</h1>
 
-    <form id="chat-form" class="chatbar" autocomplete="off">
-      <input type="text" id="user-input" placeholder="Type your message..." required />
-      <button type="submit" class="send-btn">➤</button>
+    <form id="auth-form" class="auth-form">
+      <input type="email" id="email" placeholder="Enter your email" required />
+      <button type="submit" class="auth-btn" id="submitBtn">Send Magic Link</button>
     </form>
-  </main>
 
-  <script>
-    const API_KEY = "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";
-    const MODEL = "llama3-70b-8192";
+    <div class="auth-message" id="auth-message"></div>
 
-    const chatForm = document.getElementById("chat-form");
-    const chatInput = document.getElementById("user-input");
-    const chatArea = document.getElementById("chatArea");
+    <p class="toggle">
+      Don't have an account? <a href="#" id="toggleLink">Sign Up</a>
+    </p>
+  </div>
 
-    chatForm.addEventListener("submit", async (e) => {
+  <!-- Supabase Magic Link Auth Script -->
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+    const supabaseUrl = 'https://lmoomgeafnmijdcxzchq.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxtb29tZ2VhZm5taWpkY3h6Y2hxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyMDk2NzMsImV4cCI6MjA2Nzc4NTY3M30.2LAtjy1eyQtFiuk-ZZDciw_71H88xaAxSkQPNCb5Arg';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const formTitle = document.getElementById("formTitle");
+    const toggleLink = document.getElementById("toggleLink");
+    const submitBtn = document.getElementById("submitBtn");
+    const authForm = document.getElementById("auth-form");
+    const authMessage = document.getElementById("auth-message");
+    const emailInput = document.getElementById("email");
+
+    let isSignIn = true;
+    let cooldown = false;
+
+    toggleLink.onclick = (e) => {
       e.preventDefault();
-      const userMessage = chatInput.value.trim();
-      if (!userMessage) return;
+      isSignIn = !isSignIn;
+      formTitle.textContent = isSignIn ? "Sign In" : "Sign Up";
+      toggleLink.textContent = isSignIn ? "Sign Up" : "Sign In";
+      document.querySelector(".toggle").childNodes[0].nodeValue = isSignIn
+        ? "Don't have an account? "
+        : "Already have an account? ";
+      authMessage.textContent = "";
+    };
 
-      addMessage(userMessage, true);
-      chatInput.value = "";
-      addMessage("Typing...", false);
+    authForm.onsubmit = async (e) => {
+      e.preventDefault();
 
-      const wantsCode = /code|html|css|js|function|create/i.test(userMessage);
-      const systemPrompt = wantsCode
-        ? "You are DeepSeek. Format all code responses inside triple backticks."
-        : "You are DeepSeek, a helpful assistant.";
+      const email = emailInput.value.trim();
 
-      try {
-        const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${API_KEY}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            model: MODEL,
-            messages: [
-              { role: "system", content: systemPrompt },
-              { role: "user", content: userMessage }
-            ]
-          })
-        });
-
-        const data = await res.json();
-        chatArea.lastChild.remove(); // remove "Typing..."
-        const reply = data?.choices?.[0]?.message?.content || "⚠️ No response";
-        addMessage(reply, false);
-      } catch (err) {
-        chatArea.lastChild.remove();
-        addMessage("⚠️ Failed to get response.", false);
-        console.error(err);
+      // Simple email validation
+      const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      if (!validEmail) {
+        authMessage.style.color = "red";
+        authMessage.textContent = "❌ Please enter a valid email address.";
+        return;
       }
-    });
 
-    function addMessage(text, isUser) {
-      const msg = document.createElement("div");
-      msg.className = `message ${isUser ? "user" : "bot"}`;
-      const bubble = document.createElement("div");
-      bubble.className = "bubble";
-      bubble.innerHTML = formatText(text);
-      msg.appendChild(bubble);
-      chatArea.appendChild(msg);
-      chatArea.scrollTop = chatArea.scrollHeight;
+      if (cooldown) {
+        authMessage.style.color = "orange";
+        authMessage.textContent = "⏳ Please wait before requesting again.";
+        return;
+      }
 
-      setTimeout(() => {
-        document.querySelectorAll("pre code").forEach(codeBlock => {
-          if (!codeBlock.parentElement.querySelector(".copy-btn")) {
-            const btn = document.createElement("button");
-            btn.className = "copy-btn";
-            btn.textContent = "Copy";
-            btn.onclick = () => {
-              navigator.clipboard.writeText(codeBlock.textContent);
-              btn.textContent = "Copied!";
-              setTimeout(() => (btn.textContent = "Copy"), 1200);
-            };
-            codeBlock.parentElement.appendChild(btn);
-          }
-        });
-      }, 200);
-    }
+      authMessage.style.color = "#6cc3fa";
+      authMessage.textContent = "Sending magic link...";
 
-    function formatText(text) {
-      return text
-        .replace(/```(?:html|css|js|javascript)?\n([\s\S]*?)```/gi, (_, code) =>
-          `<pre><code>${escapeHTML(code)}</code></pre>`)
-        .replace(/`([^`]+)`/g, '<code>$1</code>');
-    }
+      const { data, error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: !isSignIn,
+          emailRedirectTo: window.location.origin + "/chat.html"
+        }
+      });
 
-    function escapeHTML(html) {
-      return html.replace(/&/g, "&amp;")
-                 .replace(/</g, "&lt;")
-                 .replace(/>/g, "&gt;");
-    }
+      if (error) {
+        authMessage.style.color = "red";
+        if (error.message.includes("For security purposes")) {
+          authMessage.textContent = "⏳ Wait 60 seconds before trying again.";
+        } else {
+          authMessage.textContent = "❌ " + error.message;
+        }
+      } else {
+        authMessage.style.color = "lightgreen";
+        authMessage.textContent = "✅ Magic link sent! Check your email.";
+        cooldown = true;
+        setTimeout(() => {
+          cooldown = false;
+        }, 60000); // 60 seconds
+      }
+    };
   </script>
+
 </body>
 </html>
-
