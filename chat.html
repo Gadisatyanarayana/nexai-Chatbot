@@ -299,8 +299,8 @@
 
       const wantsCode = /code|html|css|js|function|create/i.test(userMessage);
       const systemPrompt = wantsCode
-        ? "You are DeepSeek. Format all code responses inside triple backticks."
-        : "You are DeepSeek, a helpful assistant.";
+        ? "You are NexAI. Format all code responses inside triple backticks."
+        : "You are NexAI, a helpful assistant.";
 
       try {
         const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
