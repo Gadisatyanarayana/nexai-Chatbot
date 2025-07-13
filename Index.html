@@ -2,12 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>DeepSeek | Auth</title>
+  <title>NexAI | Auth</title>
   <link rel="stylesheet" href="style.css" />
-
-  <!-- Material Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
-
   <style>
     body {
       background: linear-gradient(145deg, #181a20, #1e222a);
@@ -30,13 +27,9 @@
       box-shadow: 0 8px 32px rgba(0,0,0,0.3);
     }
 
-    .center-logo {
-      height: 50px;
-      width: 50px;
-      border-radius: 12px;
-      background: #2b2f37;
-      object-fit: contain;
-      box-shadow: 0 0 8px rgba(0,0,0,0.3);
+    .logo-icon {
+      font-size: 40px;
+      color: #6cc3fa;
       margin-bottom: 16px;
     }
 
@@ -47,7 +40,7 @@
     .auth-form {
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 16px;
       width: 320px;
     }
 
@@ -81,13 +74,13 @@
     }
 
     .auth-message {
-      margin-top: 18px;
-      font-size: 1em;
+      margin-top: 14px;
+      font-size: 0.95em;
       text-align: center;
     }
 
     .toggle {
-      margin-top: 24px;
+      margin-top: 20px;
       color: #b0b0b0;
     }
 
@@ -99,107 +92,109 @@
     a:hover {
       text-decoration: underline;
     }
-
-    .logo-icon {
-      font-size: 40px;
-      color: #6cc3fa;
-      margin-bottom: 16px;
-    }
   </style>
 </head>
 <body>
 
   <div class="center-content">
-    <!-- Material Icon Logo -->
+    <!-- Logo Icon -->
     <span class="material-icons-outlined logo-icon">search</span>
 
+    <!-- Title that changes (Sign In / Sign Up) -->
     <h1 id="formTitle">Sign In</h1>
 
+    <!-- Auth Form -->
     <form id="auth-form" class="auth-form">
       <input type="email" id="email" placeholder="Enter your email" required />
-      <button type="submit" class="auth-btn" id="submitBtn">Send Magic Link</button>
+      <input type="password" id="password" placeholder="Enter your password" required />
+      <button type="submit" class="auth-btn" id="submitBtn">Login</button>
     </form>
 
+    <!-- Message Box -->
     <div class="auth-message" id="auth-message"></div>
 
+    <!-- Toggle Link -->
     <p class="toggle">
       Don't have an account? <a href="#" id="toggleLink">Sign Up</a>
     </p>
   </div>
 
-  <!-- Supabase Magic Link Auth Script -->
+  <!-- Supabase Setup Script -->
   <script type="module">
+    // Import Supabase client
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
+    // ✅ Supabase credentials
     const supabaseUrl = 'https://lmoomgeafnmijdcxzchq.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxtb29tZ2VhZm5taWpkY3h6Y2hxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyMDk2NzMsImV4cCI6MjA2Nzc4NTY3M30.2LAtjy1eyQtFiuk-ZZDciw_71H88xaAxSkQPNCb5Arg';
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // Get DOM elements
     const formTitle = document.getElementById("formTitle");
     const toggleLink = document.getElementById("toggleLink");
     const submitBtn = document.getElementById("submitBtn");
     const authForm = document.getElementById("auth-form");
     const authMessage = document.getElementById("auth-message");
     const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
 
-    let isSignIn = true;
-    let cooldown = false;
+    let isLogin = true;
 
+    // Toggle between Login and Signup
     toggleLink.onclick = (e) => {
       e.preventDefault();
-      isSignIn = !isSignIn;
-      formTitle.textContent = isSignIn ? "Sign In" : "Sign Up";
-      toggleLink.textContent = isSignIn ? "Sign Up" : "Sign In";
-      document.querySelector(".toggle").childNodes[0].nodeValue = isSignIn
+      isLogin = !isLogin;
+      formTitle.textContent = isLogin ? "Sign In" : "Sign Up";
+      submitBtn.textContent = isLogin ? "Login" : "Register";
+      toggleLink.textContent = isLogin ? "Sign Up" : "Sign In";
+      document.querySelector(".toggle").childNodes[0].nodeValue = isLogin
         ? "Don't have an account? "
         : "Already have an account? ";
       authMessage.textContent = "";
     };
 
+    // Handle Submit
     authForm.onsubmit = async (e) => {
       e.preventDefault();
-
       const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
 
-      // Simple email validation
-      const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-      if (!validEmail) {
+      if (!email || !password) {
         authMessage.style.color = "red";
-        authMessage.textContent = "❌ Please enter a valid email address.";
-        return;
-      }
-
-      if (cooldown) {
-        authMessage.style.color = "orange";
-        authMessage.textContent = "⏳ Please wait before requesting again.";
+        authMessage.textContent = "❌ Please fill out all fields.";
         return;
       }
 
       authMessage.style.color = "#6cc3fa";
-      authMessage.textContent = "Sending magic link...";
+      authMessage.textContent = isLogin ? "Logging in..." : "Registering...";
 
-      const { data, error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          shouldCreateUser: !isSignIn,
-          emailRedirectTo: window.location.origin + "/chat.html"
-        }
-      });
-
-      if (error) {
-        authMessage.style.color = "red";
-        if (error.message.includes("For security purposes")) {
-          authMessage.textContent = "⏳ Wait 60 seconds before trying again.";
-        } else {
+      if (isLogin) {
+        // 🔐 Login with email + password
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          authMessage.style.color = "red";
           authMessage.textContent = "❌ " + error.message;
+        } else {
+          authMessage.style.color = "lightgreen";
+          authMessage.textContent = "✅ Logged in!";
+          window.location.href = "chat.html"; // Go to chatbot
         }
       } else {
-        authMessage.style.color = "lightgreen";
-        authMessage.textContent = "✅ Magic link sent! Check your email.";
-        cooldown = true;
-        setTimeout(() => {
-          cooldown = false;
-        }, 60000); // 60 seconds
+        // 🆕 Sign Up with email + password
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: window.location.origin + "/chat.html"
+          }
+        });
+        if (error) {
+          authMessage.style.color = "red";
+          authMessage.textContent = "❌ " + error.message;
+        } else {
+          authMessage.style.color = "lightgreen";
+          authMessage.textContent = "✅ Registered! Please verify your email before logging in.";
+        }
       }
     };
   </script>
