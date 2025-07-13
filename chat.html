@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>NexAI Chatbot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+
+  <!-- Supabase Client -->
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+    const supabase = createClient(
+      'https://lmoomgeafnmijdcxzchq.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxtb29tZ2VhZm5taWpkY3h6Y2hxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyMDk2NzMsImV4cCI6MjA2Nzc4NTY3M30.2LAtjy1eyQtFiuk-ZZDciw_71H88xaAxSkQPNCb5Arg'
+    );
+
+    window.supabase = supabase;
+
+    // Check if user is logged in
+    async function checkUser() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        window.location.href = "auth.html";
+      } else {
+        document.getElementById("user-email").textContent = user.email || user.id;
+      }
+    }
+
+    // Logout handler
+    async function handleLogout() {
+      await supabase.auth.signOut();
+      window.location.href = "auth.html";
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      checkUser();
+      document.getElementById("signout-btn").onclick = handleLogout;
+    });
+  </script>
+
+  <style>
+    /* Your full CSS pasted from your original content */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: linear-gradient(145deg, #181a20, #1e222a);
+      color: #eaeaea;
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(35, 39, 47, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #2e2e2e;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: #2b2f37;
+      color: #6cc3fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+    }
+
+    .app-title {
+      font-size: 1.4em;
+      color: #6cc3fa;
+      font-weight: bold;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-email {
+      color: #ccc;
+      font-size: 0.95em;
+    }
+
+    #signout-btn {
+      background: #6cc3fa;
+      border: none;
+      color: #181a20;
+      font-weight: bold;
+      border-radius: 8px;
+      padding: 6px 14px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    #signout-btn:hover {
+      background: #ffffff;
+      color: #23272f;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 40px;
+      padding-bottom: 120px;
+    }
+
+    .center-box {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 0 10px;
+    }
+
+    .center-logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      background: #2b2f37;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 40px;
+      color: #6cc3fa;
+    }
+
+    h1 { font-size: 1.8em; }
+    .subtitle { color: #aaa; font-size: 1em; }
+
+    #chatArea {
+      width: 100%;
+      max-width: 800px;
+      padding: 0 20px;
+      margin-top: 20px;
+      overflow-y: auto;
+      flex-grow: 1;
+    }
+
+    .message {
+      display: flex;
+      margin-bottom: 16px;
+    }
+
+    .user { justify-content: flex-end; }
+    .bot { justify-content: flex-start; }
+
+    .bubble {
+      background: #23272f;
+      padding: 12px 16px;
+      border-radius: 14px;
+      max-width: 80%;
+      color: white;
+      white-space: pre-wrap;
+    }
+
+    .user .bubble {
+      background: #6cc3fa;
+      color: #181a20;
+      border-bottom-right-radius: 4px;
+    }
+
+    .bot .bubble {
+      border-bottom-left-radius: 4px;
+    }
+
+    .chatbar {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 640px;
+      background: rgba(35, 39, 47, 0.95);
+      display: flex;
+      gap: 10px;
+      padding: 14px 20px;
+      border-radius: 20px;
+      z-index: 100;
+    }
+
+    #user-input {
+      flex: 1;
+      padding: 12px 16px;
+      border-radius: 16px;
+      background: #181a20;
+      border: none;
+      color: white;
+      font-size: 1em;
+    }
+
+    .send-btn {
+      background: #6cc3fa;
+      border: none;
+      color: #181a20;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 1.2em;
+      cursor: pointer;
+    }
+
+    pre {
+      background: #111;
+      padding: 10px;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+
+    pre code { color: #6cc3fa; }
+
+    .copy-btn {
+      margin-top: 5px;
+      font-size: 0.9em;
+      padding: 4px 10px;
+      border: none;
+      background: #444;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      .app-title { font-size: 1.2em; }
+      .chatbar { padding: 12px 14px; gap: 8px; bottom: 12px; }
+      #user-input { font-size: 0.95em; }
+      .send-btn { width: 36px; height: 36px; font-size: 1em; }
+      .bubble { font-size: 0.95em; max-width: 90%; }
+      header { padding: 16px 16px; }
+      .center-box h1 { font-size: 1.4em; }
+      .center-logo { width: 56px; height: 56px; font-size: 36px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-title">
+      <div class="logo"><span class="material-icons-outlined">search</span></div>
+      <span class="app-title">NexAI</span>
+    </div>
+    <div class="user-info">
+      <span id="user-email" class="user-email">Loading...</span>
+      <button id="signout-btn">Sign Out</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="center-box">
+      <div class="center-logo">
+        <span class="material-icons-outlined">search</span>
+      </div>
+      <h1>Hi, I'm NexAI.</h1>
+      <p class="subtitle">How can I help you today?</p>
+    </div>
+
+    <div id="chatArea"></div>
+
+    <form id="chat-form" class="chatbar" autocomplete="off">
+      <input type="text" id="user-input" placeholder="Type your message..." required />
+      <button type="submit" class="send-btn">➤</button>
+    </form>
+  </main>
+
+  <script>
+    const API_KEY = "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";
+    const MODEL = "llama3-70b-8192";
+
+    const chatForm = document.getElementById("chat-form");
+    const chatInput = document.getElementById("user-input");
+    const chatArea = document.getElementById("chatArea");
+
+    chatForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const userMessage = chatInput.value.trim();
+      if (!userMessage) return;
+
+      addMessage(userMessage, true);
+      chatInput.value = "";
+      addMessage("Typing...", false);
+
+      const wantsCode = /code|html|css|js|function|create/i.test(userMessage);
+      const systemPrompt = wantsCode
+        ? "You are DeepSeek. Format all code responses inside triple backticks."
+        : "You are DeepSeek, a helpful assistant.";
+
+      try {
+        const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${API_KEY}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model: MODEL,
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: userMessage }
+            ]
+          })
+        });
+
+        const data = await res.json();
+        chatArea.lastChild.remove();
+        const reply = data?.choices?.[0]?.message?.content || "⚠️ No response";
+        addMessage(reply, false);
+      } catch (err) {
+        chatArea.lastChild.remove();
+        addMessage("⚠️ Failed to get response.", false);
+        console.error(err);
+      }
+    });
+
+    function addMessage(text, isUser) {
+      const msg = document.createElement("div");
+      msg.className = `message ${isUser ? "user" : "bot"}`;
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.innerHTML = formatText(text);
+      msg.appendChild(bubble);
+      chatArea.appendChild(msg);
+      chatArea.scrollTop = chatArea.scrollHeight;
+
+      setTimeout(() => {
+        document.querySelectorAll("pre code").forEach(codeBlock => {
+          if (!codeBlock.parentElement.querySelector(".copy-btn")) {
+            const btn = document.createElement("button");
+            btn.className = "copy-btn";
+            btn.textContent = "Copy";
+            btn.onclick = () => {
+              navigator.clipboard.writeText(codeBlock.textContent);
+              btn.textContent = "Copied!";
+              setTimeout(() => (btn.textContent = "Copy"), 1200);
+            };
+            codeBlock.parentElement.appendChild(btn);
+          }
+        });
+      }, 200);
+    }
+
+    function formatText(text) {
+      return text
+        .replace(/```(?:html|css|js|javascript)?\n([\s\S]*?)```/gi, (_, code) =>
+          `<pre><code>${escapeHTML(code)}</code></pre>`)
+        .replace(/`([^`]+)`/g, '<code>$1</code>');
+    }
+
+    function escapeHTML(html) {
+      return html.replace(/&/g, "&amp;") 
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;");
+    }
+  </script>
+</body>
+</html>
